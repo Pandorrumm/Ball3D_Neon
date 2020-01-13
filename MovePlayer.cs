@@ -1,12 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class MovePlayer : MonoBehaviour
 {
 
-    [Range(0f, 10f)] // что бы скорость менять слайдером в Unity
+ //   [Range(0f, 10f)] // что бы скорость менять слайдером в Unity
     public float speed = 3f;
+    public float speedOff = 1f;
 
     float zPos; // для движения вперёд
     float xPos; // для движения в стороны
@@ -33,6 +36,9 @@ public class MovePlayer : MonoBehaviour
 
     public GameObject particleBallDestroy;
 
+    public Text SpeedText;
+
+    
 
 
     void Start()
@@ -40,19 +46,21 @@ public class MovePlayer : MonoBehaviour
         //rb = GetComponent<Rigidbody>();
         //col = GetComponent<BoxCollider>();
         winsText.SetActive(false);
+        //SpeedText.text = "Speed =  " + speed * speedOff;
+        rb = GetComponent<Rigidbody>();
     }
 
 
     void Update()
     {
         //ДЛЯ КЛАВЫ
-       // перемещение в сек.по оси z
+        // перемещение в сек.по оси z
         zPos += speed * Time.fixedDeltaTime;
-        xPos += Input.GetAxis("Horizontal") * speed * Time.deltaTime;
+        xPos += Input.GetAxis("Horizontal") * speed * Time.deltaTime * speedOff;
 
         if (jump)
         {
-            yPos = 0.36f + Mathf.Sin((transform.position.z - startZPos) / 2f * Mathf.PI / 2f) * amplitudeJump;
+            yPos = 0.5f + Mathf.Sin((transform.position.z - startZPos) / 2f * Mathf.PI / 2f) * amplitudeJump;
         }
         else
         {
@@ -62,11 +70,11 @@ public class MovePlayer : MonoBehaviour
 
         transform.position = new Vector3(xPos, yPos, zPos);
 
-
+        
 
         //ДЛЯ ТЕЛЕФОНА
 
-        //zPos += speed * Time.fixedDeltaTime;
+
 
         //if (jump)
         //{
@@ -92,7 +100,7 @@ public class MovePlayer : MonoBehaviour
 
         //    }
         //}
-
+        //zPos += speed * Time.fixedDeltaTime * speedOff;
         //transform.position = new Vector3(gameObject.transform.position.x, yPos, zPos);
 
 
@@ -144,7 +152,7 @@ public class MovePlayer : MonoBehaviour
         //    }
         //}
     }
-
+   
 
 
     private void OnCollisionEnter(Collision collision)
@@ -153,6 +161,8 @@ public class MovePlayer : MonoBehaviour
         {
             Instantiate(particleBallDestroy, new Vector3(transform.position.x, transform.position.y, transform.position.z), Quaternion.identity);
             gameObject.SetActive(false);
+
+            
         }
         else if (collision.gameObject.CompareTag("Floor")) //если столкнулись с полом
         {
@@ -160,6 +170,7 @@ public class MovePlayer : MonoBehaviour
         }
         if (collision.gameObject.tag == "DeadZone")
         {
+            Instantiate(particleBallDestroy, new Vector3(transform.position.x, transform.position.y, transform.position.z), Quaternion.identity);
             jump = false;
             gameObject.SetActive(false);
         }
