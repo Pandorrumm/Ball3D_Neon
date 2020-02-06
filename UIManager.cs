@@ -2,23 +2,37 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
+
 
 public class UIManager : MonoBehaviour
 {
-    private MovePlayer movePlayer;
-   // public GameObject restartPosition;
+    public static int ScreenWidth = Screen.width;
+    public static int ScreenHeight = Screen.height;
+    //private RotatePlayer rotatePlayer;
+    public GameObject restarButtont;
+   // public GameObject readyPanel;
+   // public GameObject PlayerRotatet;
+   // private MovePlayer movePlayer;
+
+    public GameObject completeLevelPanelUI;
+   // public GameObject pauseButton;
+
 
     private void Start()
     {
-        movePlayer = FindObjectOfType<MovePlayer>();
+        // readyPanel.SetActive(true);
+        // restarButtont.SetActive(false);
+        //  Time.timeScale = 0;
+        //  PlayerRotatet.SetActive(false);
+        // movePlayer = FindObjectOfType<MovePlayer>();
+       // pauseButton.SetActive(false);
     }
 
     public void RestartGame()
     {
          SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 
-       // movePlayer.transform.position = restartPosition.transform.position;
-      //  movePlayer.gameObject.SetActive(true);
     }
 
     public void LevelSelect()
@@ -34,10 +48,40 @@ public class UIManager : MonoBehaviour
         
     }
 
+    public void ReadyPanel()
+    {
+        //  pause.pauzePanel.SetActive(false);
+        //if (!EventSystem.current.IsPointerOverGameObject())
+        //{
+            
+          //  readyPanel.SetActive(false);
+          //  restarButtont.SetActive(true);
+          //  PlayerRotatet.SetActive(true);
+            Time.timeScale = 1;
+
+            // rotatePlayer.XRotate = rotatePlayer.XRotate;
+            // SoundManager.PlaySound("CreateBooble");
+            //  pauseButton.SetActive(true);
+       // }
+    }
+
+    public void ExitReadyPanel()
+    {
+        
+        SceneManager.LoadScene("LevelSelect");    
+
+    }
+
     public void Menu()
     {
         SceneManager.LoadScene("LevelSelect");
     }
+    
+    public void CompleteLevel()
+    {
+        completeLevelPanelUI.SetActive(true);
+    }
+
 }
 
 

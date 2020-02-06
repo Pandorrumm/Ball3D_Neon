@@ -10,7 +10,7 @@ public class Jump : MonoBehaviour
         {
             
             other.gameObject.GetComponent<MovePlayer>().startZPos = other.gameObject.transform.position.z;
-            other.gameObject.GetComponent<MovePlayer>().jump = true;
+            other.gameObject.GetComponent<MovePlayer>().jump = true;           
             other.gameObject.GetComponent<Rigidbody>().useGravity = false;
         }
     }

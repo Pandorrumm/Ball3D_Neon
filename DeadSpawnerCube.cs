@@ -4,16 +4,11 @@ using UnityEngine;
 
 public class DeadSpawnerCube : MonoBehaviour
 {
+    public GameObject PSDestroyFromTheShield;
 
-    void Start()
+    private void Start()
     {
-
-    }
-
-
-    void Update()
-    {
-
+       // PSDestroyFromTheShield.SetActive(false);
     }
 
     private void OnTriggerEnter(Collider collision)
@@ -21,7 +16,15 @@ public class DeadSpawnerCube : MonoBehaviour
         if (collision.gameObject.tag == "Dead Spawner Cube")
         {
             Destroy(gameObject);
-            // Instantiate(puzirInsert.puzirPrefab, objectInsertPositionPuzir, Quaternion.identity);
+            
         }
+
+        if (collision.gameObject.tag == "ShieldDestroy")
+        {
+          //  PSDestroyFromTheShield.SetActive(true);
+            Destroy(gameObject);
+            Instantiate(PSDestroyFromTheShield, transform.position, Quaternion.identity);
+        }
+
     }
 }
