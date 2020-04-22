@@ -2,53 +2,42 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
-
-public class MovePlayerLevel3 : MonoBehaviour
+public class MovePlayerSity : MonoBehaviour
 {
 
     public VariableJoystick variableJoystick;
 
     public float speed = 3f;
-    //public float speedOff = 1f;
+    public bool jump = false;
+    public bool highJump = false;
 
     float zPos; // для движения вперёд
     float xPos; // для движения в стороны
     float yPos;
     public float startZPos; //откуда начинается прыжок
-    public float startYPos;
-    public float amplitudeJump;
-    public bool jump = false;
-    public bool highJump = false;
-    public float tiltAngle = 8;
+    public float startYPos; 
 
     private float deltaX;
     Rigidbody rb;
-    // BoxCollider col;
-
-   // public GameObject winsText;
     public GameObject gameOverPanel;
     public GameObject particleBallDestroy;
     public CubeSpawner[] cubeSpawners;
     public CubeSpawnerThreeEnemy[] CubeSpawnerThreeEnemy;
-    // public GameObject finishText;
-
+    
     private UIManager uIManager;
 
     private StressReceiver stressReceiver; //shake FX Camera
     SphereCollider sphereCollider;
 
     private CubeSpawner cubeSpawner;
-    // PauseButton pauseButton;
 
     [Header("Power Up Speed")]
     public bool powerUpSpeedActive = false;
-    public float powerUpSpeed = 5f;   
+    public float powerUpSpeed = 5f;
     public float timeDurationPowerUpSpeed; //// продолжительность PowerUpSpeed
     public GameObject pSPowerUpSpeed;
     public GameObject pSWirpDrive;
-    
-    
+
 
     [Header("Power Up Shield")]
     public bool powerUpShieldActiv = false;
@@ -64,19 +53,12 @@ public class MovePlayerLevel3 : MonoBehaviour
 
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
-        //col = GetComponent<BoxCollider>();
-       // winsText.SetActive(false);
-        gameOverPanel.SetActive(false);
-        //finishText.SetActive(false);
-        //SpeedText.text = "Speed =  " + speed * speedOff;
-        // moveCubeSpawner = FindObjectOfType<MoveCubeSpawner>();
+        rb = GetComponent<Rigidbody>();     
+        gameOverPanel.SetActive(false);      
         sphereCollider = GetComponent<SphereCollider>();
         stressReceiver = FindObjectOfType<StressReceiver>();
         cubeSpawner = FindObjectOfType<CubeSpawner>();
-        uIManager = FindObjectOfType<UIManager>();
-        // pauseButton = FindObjectOfType<PauseButton>();
-
+        uIManager = FindObjectOfType<UIManager>();       
         rotatePlayer = FindObjectOfType<RotatePlayer>();
         pSPowerUpSpeed.SetActive(false);
         PowerUpShieldPlayer.SetActive(false);
@@ -85,7 +67,7 @@ public class MovePlayerLevel3 : MonoBehaviour
         pSWirpDrive.SetActive(false);
 
     }
- 
+
 
     void Update()
     {
@@ -137,16 +119,7 @@ public class MovePlayerLevel3 : MonoBehaviour
 
         //ДЛЯ ТЕЛЕФОНА    speedOff = 2 в Unity 
 
-        if (jump)
-        {
-            //yPos = 0.6f + Mathf.Sin((transform.position.z - startZPos) / 2f * Mathf.PI / 2f) * amplitudeJump;
-            yPos = 0.36f + Mathf.Sin((transform.position.z - startZPos) / 2f * Mathf.PI / 2f) * amplitudeJump;
-        }
-        else
-        {
-            yPos = transform.position.y; //оставляем yPos таким же как и есть типа
-            gameObject.GetComponent<Rigidbody>().useGravity = true;
-        }
+       
 
         //if (Input.touchCount > 0)
         //{
@@ -180,19 +153,24 @@ public class MovePlayerLevel3 : MonoBehaviour
         //джойстик
 
 
+
         if (variableJoystick.Horizontal > 0.1f)
         {
-            transform.Translate(tiltAngle * Time.deltaTime, 0, 0);
+            transform.Translate(13* Time.deltaTime, 0, 0);
 
         }
         else if (variableJoystick.Horizontal < -0.1f)
         {
-            transform.Translate(-tiltAngle * Time.deltaTime, 0, 0);
+            transform.Translate(-13 * Time.deltaTime, 0, 0);
         }
 
-        
+        //////Vector3 direction = Vector3.forward * variableJoystick.Vertical + Vector3.right * variableJoystick.Horizontal;
+        //////rb.AddForce(direction * speed * Time.deltaTime, ForceMode.VelocityChange);
+
+        // zPos += speed * Time.fixedDeltaTime;
         zPos += speed * Time.deltaTime;
         transform.position = new Vector3(gameObject.transform.position.x, yPos, zPos);
+
 
     }
 
@@ -201,7 +179,6 @@ public class MovePlayerLevel3 : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("ObstacleUp") || collision.gameObject.CompareTag("Obstacle")) //если столкнулись с препятствием
         {
-
             IEnumerator fadeMusicLevel = AudioFadeOut.FadeOut(musicLevel, 0.025f); //уменьшаем громкость музыки
             StartCoroutine(fadeMusicLevel);
             StopCoroutine(fadeMusicLevel);
@@ -210,7 +187,7 @@ public class MovePlayerLevel3 : MonoBehaviour
 
             Instantiate(particleBallDestroy, new Vector3(transform.position.x, transform.position.y, transform.position.z), Quaternion.identity);
             gameObject.SetActive(false);
-      
+
             stressReceiver.InduceStress(2f);
             stressReceiver.TraumaExponent = 1f;
 
@@ -237,7 +214,7 @@ public class MovePlayerLevel3 : MonoBehaviour
         }
         if (collision.gameObject.tag == "DeadZone")
         {
-            IEnumerator fadeMusicLevel = AudioFadeOut.FadeOut(musicLevel, 0.025f); //уменьшаем громкость
+            IEnumerator fadeMusicLevel = AudioFadeOut.FadeOut(musicLevel, 0.025f); //уменьшаем громкость музыки
             StartCoroutine(fadeMusicLevel);
             StopCoroutine(fadeMusicLevel);
 
@@ -274,6 +251,7 @@ public class MovePlayerLevel3 : MonoBehaviour
             //pauseButton.gameObject.SetActive(false);
         }
 
+
         if (collision.gameObject.tag == "DeadEnemySpawner")
         {
 
@@ -297,6 +275,7 @@ public class MovePlayerLevel3 : MonoBehaviour
         if (collision.gameObject.tag == "PowerUpShield")
         {
             SoundManager.PlaySound("TakePowerUp");
+
             //powerUpShieldActiv = true;
             //PSDevelopmentUpShield.SetActive(true);
             //pSPowerUpShield.SetActive(true);
@@ -337,6 +316,7 @@ public class MovePlayerLevel3 : MonoBehaviour
         yield return new WaitForSeconds(timeDurationPowerUpShield);
 
         SoundManager.PlaySound("DestroyShield");
+
         PSDestroyShield.SetActive(true);
         powerUpShieldActiv = false;
         PSDevelopmentUpShield.SetActive(false);
@@ -346,13 +326,11 @@ public class MovePlayerLevel3 : MonoBehaviour
         PSDestroyShield.SetActive(false);
     }
 
-   
+
 
     private void Playerfalse()
     {
         gameObject.SetActive(false);
     }
-
-
 
 }

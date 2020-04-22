@@ -24,8 +24,8 @@ public class CameraLevelXl : MonoBehaviour
         // Что бы камера При прыжке не подпрыгивала (не меняем позицию по y) 
         if (player.gameObject.GetComponent<MovePlayer>().jump)
         {
-            gameObject.transform.position = new Vector3((player.transform.position.x - offset.x) * 0.8f,
-                                                     2.5f,
+            gameObject.transform.position = new Vector3((player.transform.position.x - offset.x) * 0.7f,
+                                                    4.925f,
                                                      player.transform.position.z - offset.z);
         }
         else

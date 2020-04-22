@@ -8,6 +8,7 @@ public class JumpLevel3 : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
+            SoundManager.PlaySound("Jump");
             other.gameObject.GetComponent<Rigidbody>().useGravity = false;
             other.gameObject.GetComponent<MovePlayerLevel3>().startZPos = other.gameObject.transform.position.z;
             //other.gameObject.GetComponent<MovePlayerLevel3>().startYPos = other.gameObject.transform.position.y;

@@ -21,6 +21,8 @@ public class MoveObstacleLeftRight : MonoBehaviour
     {
         if (Vector3.Distance(transform.position, startPosition) < distance && !back)
         {
+           // SoundManager.PlaySound("MoveCubeLeftRight");
+
             transform.position += direction.normalized * speedMove * Time.deltaTime;
         }
         else

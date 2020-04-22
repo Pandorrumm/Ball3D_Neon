@@ -1,5 +1,4 @@
-﻿
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,23 +8,24 @@ using UnityEngine.EventSystems;
 public class MovePlayer : MonoBehaviour
 {
 
- //   [Range(0f, 10f)] // что бы скорость менять слайдером в Unity
+    //   [Range(0f, 10f)] // что бы скорость менять слайдером в Unity
     public float speed = 3f;
     // public float speedOff = 1f;
-    
-    float zPos; // для движения вперёд
-    float xPos; // для движения в стороны
-    float yPos;
+
+    private float zPos; // для движения вперёд
+    private float xPos; // для движения в стороны
+    private float yPos;
     public float startZPos; //откуда начинается прыжок
     public float amplitudeJump;
     public bool jump = false;
 
     private float deltaX;
-    Rigidbody rb;
-    BoxCollider col;
+    private Rigidbody rb;
+    private BoxCollider col;
 
-    public GameObject winsText;
-    public GameObject gameOverText;
+    // public GameObject winsText;
+    public GameObject gameOverPanel;
+
 
     //public bool directionChosen;
     //public Vector3 direction;
@@ -40,11 +40,12 @@ public class MovePlayer : MonoBehaviour
     public GameObject particleBallDestroy;
 
     public CubeSpawner[] cubeSpawners;
+    
 
     //private MoveCubeSpawner moveCubeSpawner;
 
     //CharacterController cc;
-    Vector3 moveVec; //направление движения
+    private Vector3 moveVec; //направление движения
     //Vector3 gravity;
     //int laneNumber = 1; //номер текущей линии
     //int lanesCount = 4; // кол-во линий  0,1,2,3,4
@@ -59,95 +60,36 @@ public class MovePlayer : MonoBehaviour
     private Vector2 startTouchPosition, endTouchPosition;
     private Vector3 startPlayerPosition, endPlayerPosition;
     private float swipeTime;
-    public float swipeDuration = 0.1f; //продолжительность
-    public float maxWidthSwipe = 2.88f; // max ширина дороги для свайпа
-    public float stepSwipe = 0.96f; // шаг влево вправо какой будет
-    public float stepZforward = 0.5f; // шаг вперед при свайпе по оси z
+    private float swipeDuration = 0.1f; //продолжительность
+    private float maxWidthSwipe = 2.88f; // max ширина дороги для свайпа
+    private float stepSwipe = 0.96f; // шаг влево вправо какой будет
+    private float stepZforward = 0.5f; // шаг вперед при свайпе по оси z
 
     private UIManager uIManager;
 
     private StressReceiver stressReceiver;
 
-    SphereCollider sphereCollider;
+    private SphereCollider sphereCollider;
 
-    // CameraController cameraController;
+    private GameObject[] deadZone;
 
-    GameObject[] deadZone;
-
-   // PauseButton pauseButton;
-
-
-
+    public AudioSource musicLevel;
+    
 
     void Start()
-    {
-        // rb = GetComponent<Rigidbody>();
-        // col = GetComponent<BoxCollider>();
-        winsText.SetActive(false);
-        gameOverText.SetActive(false);
+    {      
+        gameOverPanel.SetActive(false);
         uIManager = FindObjectOfType<UIManager>();
-        //cc = GetComponent<CharacterController>();
-
-        ////определяем вектор направления
-        //moveVec = new Vector3(0, 0, 1); //направление по z оси  у нас
-        //gravity = Vector3.zero;
+        
         stressReceiver = FindObjectOfType<StressReceiver>();
         sphereCollider = GetComponent<SphereCollider>();
-        // cameraController = FindObjectOfType<CameraController>();
+        
         deadZone = GameObject.FindGameObjectsWithTag("DeadZone");
-       // pauseButton = FindObjectOfType<PauseButton>();
-
+        
     }
 
     void Update()
     {
-
-        //if(cc.isGrounded)
-        //{
-        //    gravity = Vector3.zero;
-
-        //    if(Input.GetAxisRaw("Vertical") > 0)
-        //    {
-        //        gravity.y = jumpSpeed;
-        //    }
-        //}
-        //else
-        //{
-        //    gravity += Physics.gravity * Time.deltaTime * 2;
-        //}
-
-        //moveVec.z = speed;
-        //moveVec *= Time.deltaTime;
-
-        //moveVec += gravity;
-
-        //float input = Input.GetAxis("Horizontal");
-
-        //if(Mathf.Abs(input) > .1f)
-        //{
-        //    if (!didChangeLastFrame)
-        //    {
-        //        didChangeLastFrame = true;
-        //        //если нажата кнопка влево, то input будет отрицательным, если нажата кнопка вправо, то input будет положительным
-        //        laneNumber += (int)Mathf.Sign(input);
-
-        //        //ограничиваем laneNumber от 0 и до кол-ва линий
-        //        laneNumber = Mathf.Clamp(laneNumber, 0, lanesCount);
-        //    }
-
-        //}
-        //else
-        //{
-        //    didChangeLastFrame = false;
-        //}
-
-        ////горизонтальное перемещение игрока
-        //Vector3 newPos = transform.position;
-        //newPos.x = Mathf.Lerp(newPos.x, FirstLanePos + (laneNumber * LaneDistance), Time.deltaTime * SideSpeed);
-        //transform.position = newPos;
-
-        //cc.Move(moveVec); // функция из CharacterController
-
 
 
         //ДЛЯ КЛАВЫ   speedOff = 4 в Unity 
@@ -207,12 +149,13 @@ public class MovePlayer : MonoBehaviour
 
         //if (pauseButton.isPaused)
         //{
-           
+
         //    //return;
         //}
-        
+
         if (jump)
         {
+       
             //yPos = 0.36f + Mathf.Sin((transform.position.z - startZPos) / 2f * Mathf.PI / 2f) * amplitudeJump;
             yPos = 0.65f + Mathf.Sin((transform.position.z - startZPos) / 2f * Mathf.PI / 2f) * amplitudeJump;
         }
@@ -231,8 +174,6 @@ public class MovePlayer : MonoBehaviour
                 startTouchPosition = Input.GetTouch(0).position;
 
             }
-
-
 
             if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended)
             {
@@ -253,10 +194,9 @@ public class MovePlayer : MonoBehaviour
             }
 
         }
-            // zPos += speed * Time.fixedDeltaTime;
-            zPos += speed * Time.deltaTime;
-            transform.position = new Vector3(gameObject.transform.position.x, yPos, zPos);
-        
+        // zPos += speed * Time.fixedDeltaTime;
+        zPos += speed * Time.deltaTime;
+        transform.position = new Vector3(gameObject.transform.position.x, yPos, zPos);
 
     }
 
@@ -266,6 +206,7 @@ public class MovePlayer : MonoBehaviour
         switch (whereToSwipe)
         {
             case "left":
+                SoundManager.PlaySound("Swipe");
                 swipeTime = 0f;
                 startPlayerPosition = transform.position;
                 endPlayerPosition = new Vector3(startPlayerPosition.x - stepSwipe, transform.position.y,
@@ -280,6 +221,7 @@ public class MovePlayer : MonoBehaviour
                 break;
 
             case "right":
+                SoundManager.PlaySound("Swipe");
                 swipeTime = 0f;
                 startPlayerPosition = transform.position;
                 endPlayerPosition = new Vector3(startPlayerPosition.x + stepSwipe, transform.position.y,
@@ -301,41 +243,62 @@ public class MovePlayer : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("ObstacleUp") || collision.gameObject.CompareTag("Obstacle")) //если столкнулись с препятствием
         {
+            IEnumerator fadeMusicLevel = AudioFadeOut.FadeOut(musicLevel, 0.025f); //уменьшаем громкость музыки
+            StartCoroutine(fadeMusicLevel);
+            StopCoroutine(fadeMusicLevel);
+
+            SoundManager.PlaySound("Dead");
             Instantiate(particleBallDestroy, new Vector3(transform.position.x, transform.position.y, transform.position.z), Quaternion.identity);
             gameObject.SetActive(false);
 
             stressReceiver.InduceStress(2f);
 
-            gameOverText.SetActive(true);
+            gameOverPanel.SetActive(true);
 
-            for (int i = 0; i <= cubeSpawners.Length-1; i++)
+            for (int i = 0; i <= cubeSpawners.Length - 1; i++)
             {
-                cubeSpawners[i].stop = true;               
+                cubeSpawners[i].stop = true;
             }
-           // pauseButton.gameObject.SetActive(false);
+
+           
+            // pauseButton.gameObject.SetActive(false);
         }
 
         else if (collision.gameObject.CompareTag("Floor")) //если столкнулись с полом
         {
             jump = false;
         }
+
         if (collision.gameObject.tag == "DeadZone")
         {
+            IEnumerator fadeMusicLevel = AudioFadeOut.FadeOut(musicLevel, 0.025f); //уменьшаем громкость
+            StartCoroutine(fadeMusicLevel);
+            StopCoroutine(fadeMusicLevel);
+
+
+            SoundManager.PlaySound("Dead");
             Instantiate(particleBallDestroy, new Vector3(transform.position.x, transform.position.y, transform.position.z), Quaternion.identity);
             jump = false;
             gameObject.SetActive(false);
             stressReceiver.InduceStress(2f);
-            gameOverText.SetActive(true);
+            gameOverPanel.SetActive(true);
 
         }
 
         if (collision.gameObject.tag == "WinsPoint")
         {
+            IEnumerator fadeMusicLevel = AudioFadeOut.FadeOut(musicLevel, 0.025f);
+            StartCoroutine(fadeMusicLevel);
+            StopCoroutine(fadeMusicLevel);
+
+            SoundManager.PlaySound("Finish");
             // gameObject.SetActive(false);
             Invoke("Playerfalse", 2f);
             //winsText.SetActive(true);
             uIManager.CompleteLevel();
-            
+
+            //  levelManager.IsEndGame();   //сохранение пройденного уровня
+
             deadZone[0].SetActive(false);
         }
 
@@ -344,13 +307,13 @@ public class MovePlayer : MonoBehaviour
         //    finish.SetActive(true);
         //}
 
-        if (collision.gameObject.tag == "BigCollider")
-        {
-            
-            sphereCollider.radius = 1f;
-           // stressReceiver.InduceStress(1f);
-            //cameraController.CameraBackMove();
-        }
+        //if (collision.gameObject.tag == "BigCollider")
+        //{
+        //    //jump = true;
+        //    sphereCollider.radius = 1f;
+        //    // stressReceiver.InduceStress(1f);
+        //    //cameraController.CameraBackMove();
+        //}
 
     }
 

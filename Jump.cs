@@ -8,7 +8,7 @@ public class Jump : MonoBehaviour
     {
         if(other.gameObject.CompareTag("Player"))
         {
-            
+            SoundManager.PlaySound("Jump");
             other.gameObject.GetComponent<MovePlayer>().startZPos = other.gameObject.transform.position.z;
             other.gameObject.GetComponent<MovePlayer>().jump = true;           
             other.gameObject.GetComponent<Rigidbody>().useGravity = false;

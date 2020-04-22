@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.IO;
 using UnityEngine.EventSystems;
 
 
@@ -16,38 +17,83 @@ public class UIManager : MonoBehaviour
    // private MovePlayer movePlayer;
 
     public GameObject completeLevelPanelUI;
-   // public GameObject pauseButton;
+    // public GameObject pauseButton;
+
+    public static LevelManager levelManager;
+
+    public static int deadCounter = 0; //счётчик смертей
+
+    public AdMobInterstitial ad;
 
 
-    private void Start()
+    public void SavePlayer()
     {
-        // readyPanel.SetActive(true);
-        // restarButtont.SetActive(false);
-        //  Time.timeScale = 0;
-        //  PlayerRotatet.SetActive(false);
-        // movePlayer = FindObjectOfType<MovePlayer>();
-       // pauseButton.SetActive(false);
+        SaveScript.SavePlayer(levelManager, this);
+    }
+
+    public void LoadPlayer()
+    {
+        string path = Application.persistentDataPath + "/gamesaveNeonWay.fun";
+
+        if (File.Exists(path))
+        {
+            PlayerData data = SaveScript.LoadPlayer();
+            LevelManager.countUnlockedLevel = data.countUnlockedLevel;
+            deadCounter = data.deadCounter;
+        }
+
+        
+        //PlayerData data = SaveScript.LoadPlayer();
+        //LevelManager.countUnlockedLevel = data.countUnlockedLevel;
+        //deadCounter = data.deadCounter;
+       
     }
 
     public void RestartGame()
     {
-         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-
+        deadCounter++;
+       // Debug.Log("Счётчик смертей  " + deadCounter);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);       
     }
 
-    public void LevelSelect()
+    public void AdmobShow()
     {
-        //Если прошли уровень это нужно вставить, что бы открылся следующий
+        if (deadCounter % 3 == 0)
+        {
+            ad.ShowAds();
+           // Debug.Log("Счётчик смертей  "+ deadCounter);
+           // Debug.Log("показ баннера");
+        }
+    }
+
+    public virtual void LevelSelect() // virtual - что бы изменить для последнего уровня в спец скрипте для последнего уровня
+    {
+        //Если прошли уровень, открываем следующий
         if (SceneManager.GetActiveScene().buildIndex == LevelManager.countUnlockedLevel)
         {
             LevelManager.countUnlockedLevel++;
-            Debug.Log(LevelManager.countUnlockedLevel);
+            //Debug.Log(LevelManager.countUnlockedLevel);
         }
-
-        SceneManager.LoadScene("LevelSelect");
         
+        SceneManager.LoadScene("LevelSelect");        
     }
 
+    public void FinishScene()
+    {
+        SceneManager.LoadScene("FinishScene");
+    }
+
+    public void GameMenuScene()
+    {
+        SceneManager.LoadScene("GameMenu");
+    }
+
+    public void LevelSelectScene()
+    {
+        SceneManager.LoadScene("LevelSelect");
+    }
+
+   
     public void ReadyPanel()
     {
         //  pause.pauzePanel.SetActive(false);
@@ -66,10 +112,8 @@ public class UIManager : MonoBehaviour
     }
 
     public void ExitReadyPanel()
-    {
-        
+    {        
         SceneManager.LoadScene("LevelSelect");    
-
     }
 
     public void Menu()
@@ -82,6 +126,10 @@ public class UIManager : MonoBehaviour
         completeLevelPanelUI.SetActive(true);
     }
 
+    public void Exit()
+    {
+        Application.Quit();
+    }
 }
 
 
