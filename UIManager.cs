@@ -66,7 +66,7 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public virtual void LevelSelect() // virtual - что бы изменить для последнего уровня в спец скрипте для последнего уровня
+    public void LevelSelect() // virtual - что бы изменить для последнего уровня в спец скрипте для последнего уровня
     {
         //Если прошли уровень, открываем следующий
         if (SceneManager.GetActiveScene().buildIndex == LevelManager.countUnlockedLevel)

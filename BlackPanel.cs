@@ -10,6 +10,7 @@ public class BlackPanel : MonoBehaviour
     {
         blackPanel.SetActive(true);
         Invoke("DestroyBlackPanel", 2f);
+        LevelManager.countUnlockedLevel = 1;
     }   
 
     public void DestroyBlackPanel()

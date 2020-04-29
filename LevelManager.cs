@@ -7,69 +7,65 @@ using System.Collections;
 public class LevelManager : MonoBehaviour
 {
 
-    public static int countUnlockedLevel = 1; //кол-во открытых уровней при старте
-    //[SerializeField]
-    //private Sprite unlockedIcon;
-    [SerializeField]
-    private Sprite lockedIcon;
-
+    public static int countUnlockedLevel; //кол-во открытых уровней при старте
+     
+    public Sprite lockedIcon;
     public GameObject[] particleOpenLevels; // particle эффект при открытии уровня
 
     Animator animator;
 
-    
-    public void Start()
-    {
-   
+    void Start()
+    {       
         animator = GetComponentInChildren<Animator>();
+
+        ParticleOpenLevel();
 
         for (int i = 0; i < transform.childCount; i++) //transform.childCount кол-во дочерних элементов
         {
             if (i < countUnlockedLevel)   // когда открытые уровни
             {
-                // transform.GetChild(i).GetComponent<Image>().sprite = unlockedIcon;
+                
                 transform.GetChild(i).GetComponent<Button>().interactable = true; //кнопка становится активной, реагирует на нажатие
 
-                SoundManager.PlaySound("OpenLevel");
+               // SoundManager.PlaySound("OpenLevel");
 
-                particleOpenLevels[i].SetActive(true); // срабатывает эффект при открытии нового тура
+               // particleOpenLevels[countUnlockedLevel - 1].SetActive(true); // срабатывает эффект при открытии нового тура
 
-                if (i > 0)
-                {
-                    particleOpenLevels[i - 1].SetActive(false); // чтобы предыдущие уровни не срабатывали при загрузке сцены
-                }
+                //if (i > 0)
+                //{
+                //    particleOpenLevels[i - 1].SetActive(false); // чтобы предыдущие уровни не срабатывали при загрузке сцены
+                //}
 
-                transform.GetChild(i).GetComponent<Animator>().enabled = true;
+               // transform.GetChild(i).GetComponent<Animator>().enabled = true;
             }
 
             else    // когда закрытые уровни
             {
-                transform.GetChild(i).GetComponent<Image>().sprite = lockedIcon; // ставим иконку закрытого уровня
-                transform.GetChild(i).GetComponent<Image>().color = new Color(255, 0, 0, 255); // что бы закрытые уровни были одного цвета
-
-                transform.GetChild(i).GetComponent<Animator>().enabled = false; // отключаем анимацию цифр
-
-                // transform.GetChild(i).GetComponent<Button>().interactable = false;
-
-                //var button = transform.GetChild(i).GetComponent<Button>();
-                //var colors = transform.GetChild(i).GetComponent<Button>().colors;
-                //colors.normalColor = new Color(200, 200, 200, 90);
-                //transform.GetChild(i).GetComponent<Button>().colors = colors;
-
-                // transform.GetChild(i).transform.localScale = new Vector3(1.6f, 1.3f, 1.4f); // иконку закрытого уровня увеличиваем в размерах
-
                 transform.GetChild(i).GetComponent<Button>().enabled = false; // отключаем кнопку закрытого уровня
+
+                //transform.GetChild(i).GetComponent<Button>().interactable = false;
+
+                transform.GetChild(i).GetComponent<Image>().sprite = lockedIcon; // ставим иконку закрытого уровня
+
+                //transform.GetChild(i).GetComponent<Image>().color = new Color(255, 0, 0, 255); // что бы закрытые уровни были одного цвета
+
+                // transform.GetChild(i).GetComponent<Animator>().enabled = false; // отключаем анимацию цифр
 
                 foreach (Transform subchild in transform.GetChild(i))  //ищем 2-ю глубину детей (Image) Чилдрены Чилдренов
                 {
-                    // Debug.Log(subchild);
                     // subchild.GetComponentInChildren<Image>().enabled = false;
-                    subchild.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
+                    subchild.transform.localScale = new Vector3(0.7f, 0.7f, 0.7f);
                 }
-
             }
+
         }
 
+    }
+
+    public void ParticleOpenLevel()
+    {
+        particleOpenLevels[countUnlockedLevel - 1].SetActive(true);
+       // SoundManager.PlaySound("OpenLevel");
     }
 
     public void Level1Training()
